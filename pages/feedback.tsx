@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { feedback } from 'data/feedback';
+import { prisma } from "../lib/prisma";
 
-export default function FeedbackPage() {
+export default function FeedbackPage({feedback}) {
   const formatFeedbackType = (feedback) => {
     switch (feedback) {
       case 'FEEDBACK':
@@ -93,4 +93,20 @@ export default function FeedbackPage() {
       </main>
     </div>
   );
+}
+
+export const getServerSideProps = async () => {
+  const feedback = await prisma.feedback.findMany({
+    select: {
+      email: true,
+      message: true,
+      name: true,
+      feedbackType: true
+    }
+  });
+  return {
+    props: {
+      feedback
+    }
+  }
 }
